@@ -1,0 +1,32 @@
+services:
+  django:
+    build:
+      context: ./server
+    container_name: django
+    command: gunicorn --bind 0.0.0.0:8000 config.wsgi:application
+    volumes:
+      - ./server:/app
+    ports:
+      - "8000:8000"
+    depends_on:
+      - db
+
+  react:
+    build:
+      context: ./front
+    container_name: front
+    ports:
+      - "3000:3000"
+
+  db:
+    image: postgres:13
+    container_name: postgres
+    environment:
+      POSTGRES_DB: mydatabase
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:
